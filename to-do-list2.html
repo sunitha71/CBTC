@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .blob-container {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      top: 20px;
+      left: 20px;
+    }
+
+    .blob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      background-color: #3498db;
+      border-radius: 50%;
+      animation: blob-animation 5s infinite alternate;
+    }
+
+    @keyframes blob-animation {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    .todo-container {
+      width: 300px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .todo-item {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .todo-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob-container">
+    <div class="blob"></div>
+  </div>
+  <div class="todo-container">
+    <h1>To-Do List</h1>
+    <form id="todo-form">
+      <input type="text" id="todo-input" placeholder="Add new task">
+      <button type="submit">Add</button>
+    </form>
+    <div id="todo-list"></div>
+    <h2>Completed Tasks</h2>
+    <div id="completed-list"></div>
+  </div>
+
+  <script>
+    const todoForm = document.getElementById('todo-form');
+    const todoInput = document.getElementById('todo-input');
+    const todoList = document.getElementById('todo-list');
+    const completedList = document.getElementById('completed-list');
+
+    todoForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const task = todoInput.value.trim();
+      if (task !== '') {
+        addTask(task);
+        todoInput.value = '';
+      }
+    });
+
+    function addTask(task) {
+      const todoItem = document.createElement('div');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          todoItem.classList.add('completed');
+          const completedTime = document.createElement('span');
+          completedTime.textContent = getTimeStamp();
+          todoItem.appendChild(completedTime);
+          completedList.appendChild(todoItem);
+        } else {
+          todoItem.classList.remove('completed');
+          todoItem.removeChild(todoItem.lastChild);
+          todoList.appendChild(todoItem);
+        }
+      });
+
+      const text = document.createElement('span');
+      text.textContent = task;
+
+      const timestamp = document.createElement('span');
+      timestamp.textContent = getTimeStamp();
+
+      todoItem.classList.add('todo-item');
+      todoItem.appendChild(checkbox);
+      todoItem.appendChild(text);
+      todoItem.appendChild(timestamp);
+
+      todoList.appendChild(todoItem);
+    }
+
+    function getTimeStamp() {
+      const now = new Date();
+      const date = now.toLocaleDateString();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return `${date} ${time}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherVue</title>
+  <style>
+    /* Styles omitted for brevity */
+  </style>
+</head>
+<body>
+  <div class="blob-container">
+    <div class="blob"></div>
+  </div>
+  <div class="weather-container">
+    <h1>WeatherVue</h1>
+    <input type="text" id="city-input" placeholder="Enter city name">
+    <button onclick="updateWeather()">Get Weather</button>
+    <div class="weather-info" id="weather-info">
+      <img class="weather-icon" src="" alt="Weather Icon">
+      <div class="temperature" id="temperature"></div>
+      <div class="description" id="description"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = '455b4fed47167bea92e41e7d90dbfcdb';
+
+    async function getWeather(city) {
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        displayWeather(data);
+      } catch (error) {
+        console.log('Error fetching weather data:', error);
+      }
+    }
+
+    function displayWeather(data) {
+      const weatherInfo = document.getElementById('weather-info');
+      const temperature = document.getElementById('temperature');
+      const description = document.getElementById('description');
+
+      if (data && data.main && data.weather && data.weather.length > 0) {
+        const iconUrl = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+        const icon = document.createElement('img');
+        icon.src = iconUrl;
+        icon.alt = 'Weather Icon';
+        weatherInfo.insertBefore(icon, temperature);
+
+        temperature.textContent = `${Math.round(data.main.temp)}°C`;
+        description.textContent = data.weather[0].description;
+      } else {
+        console.log('Weather data not available');
+      }
+    }
+
+    function updateWeather() {
+      const cityInput = document.getElementById('city-input');
+      const city = cityInput.value.trim();
+      if (city !== '') {
+        getWeather(city);
+      } else {
+        console.log('Please enter a valid city name');
+      }
+    }
+
+    window.addEventListener('load', () => {
+      // Default city when the page loads
+      getWeather('Telangana'); // Example city
+    });
+  </script>
+</body>
+</html>
